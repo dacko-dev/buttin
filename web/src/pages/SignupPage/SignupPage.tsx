@@ -13,7 +13,7 @@ import { Metadata } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
-import FormContainer from 'src/components/forms/FormContainer/FormContainer'
+import AuthFormContainer from 'src/components/forms/AuthFormContainer/AuthFormContainer'
 
 const SignupPage = () => {
   const { isAuthenticated, signUp } = useAuth()
@@ -50,23 +50,23 @@ const SignupPage = () => {
     <>
       <Metadata title="Signup" />
 
-      <FormContainer>
-        <div className="bg-base-900 flex w-full items-center justify-center p-6">
+      <AuthFormContainer title="Sign Up">
+        {/* <div className="flex items-center justify-center w-full p-6 bg-base-900">
           <header className="">
             <h2 className="text-2xl font-semibold ">Signup</h2>
           </header>
-        </div>
+        </div> */}
 
-        <div className="flex flex-col gap-10 px-10 py-12">
+        <div className="flex flex-grow flex-col justify-center gap-10 px-24 py-12 sm:px-12 md:flex-grow-0">
           <div>
             <Form
               onSubmit={onSubmit}
-              className="flex  min-w-[300px] flex-col gap-4"
+              className="flex flex-col gap-4 sm:min-w-[300px]"
             >
               <div>
                 <Label
                   name="email"
-                  className="ml-2 text-sm opacity-80"
+                  className="form-label"
                   // errorClassName="rw-label-error"
                 >
                   Email
@@ -88,7 +88,7 @@ const SignupPage = () => {
               <div>
                 <Label
                   name="password"
-                  className="ml-2 text-sm opacity-80"
+                  className="form-label"
                   // errorClassName="rw-label rw-label-error"
                 >
                   Password
@@ -107,7 +107,7 @@ const SignupPage = () => {
                 />
                 <FieldError name="password" className="rw-field-error ml-2" />
               </div>
-              <Submit className="btn-primary w-full font-semibold">
+              <Submit className="btn-primary w-full rounded-base-small text-lg font-semibold">
                 Sign Up
               </Submit>
             </Form>
@@ -124,7 +124,7 @@ const SignupPage = () => {
             </Link>
           </div>
         </div>
-      </FormContainer>
+      </AuthFormContainer>
     </>
   )
 }

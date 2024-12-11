@@ -1,14 +1,14 @@
 // import { render } from '@redwoodjs/testing/web'
 
-// import ButtonForm from './ButtonForm'
+// import CssEditor from './CssEditor'
 
 // //   Improve this test with help from the Redwood Testing Doc:
 // //    https://redwoodjs.com/docs/testing#testing-components
 
-// describe('ButtonForm', () => {
+// describe('CssEditor', () => {
 //   it('renders successfully', () => {
 //     expect(() => {
-//       render(<ButtonForm />)
+//       render(<CssEditor />)
 //     }).not.toThrow()
 //   })
 // })

@@ -13,7 +13,7 @@ import { Metadata } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 
 import { useAuth } from 'src/auth'
-import FormContainer from 'src/components/forms/FormContainer/FormContainer'
+import AuthFormContainer from 'src/components/forms/AuthFormContainer/AuthFormContainer'
 
 const LoginPage = () => {
   const { isAuthenticated, logIn, loading } = useAuth()
@@ -64,14 +64,8 @@ const LoginPage = () => {
     <>
       <Metadata title="Login" />
 
-      <FormContainer>
-        <div className="flex w-full items-center justify-center bg-base-900 p-6">
-          <header className="">
-            <h2 className="text-2xl font-semibold ">Login</h2>
-          </header>
-        </div>
-
-        <div className="flex flex-col gap-10 px-10 py-12">
+      <AuthFormContainer title="Login">
+        <div className="flex flex-grow flex-col justify-center gap-10 px-24 py-12 sm:px-12 md:flex-grow-0">
           <div className="">
             <Form
               onSubmit={onSubmit}
@@ -80,7 +74,7 @@ const LoginPage = () => {
               <div>
                 <Label
                   name="email"
-                  className="ml-2 text-sm opacity-80"
+                  className="form-label"
                   // errorClassName="rw-label-error"
                 >
                   Email
@@ -103,7 +97,7 @@ const LoginPage = () => {
               <div>
                 <Label
                   name="password"
-                  className="ml-2 text-sm opacity-80"
+                  className="form-label"
                   // errorClassName="rw-label rw-label-error"
                 >
                   Password
@@ -123,7 +117,7 @@ const LoginPage = () => {
                 <FieldError name="password" className="rw-field-error ml-2" />
               </div>
 
-              <Submit className="btn-primary w-full font-semibold">
+              <Submit className="btn-primary w-full rounded-base-small text-lg font-semibold">
                 Login
               </Submit>
             </Form>
@@ -148,7 +142,7 @@ const LoginPage = () => {
             </Link>
           </div>
         </div>
-      </FormContainer>
+      </AuthFormContainer>
     </>
   )
 }

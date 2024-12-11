@@ -3,6 +3,9 @@ module.exports = {
   content: ['src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
+      screens: {
+        xs: '375px',
+      },
       colors: {
         // Neutral color in tailwindcss
         base: {

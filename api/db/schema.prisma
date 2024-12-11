@@ -9,7 +9,7 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = "native"
-  previewFeatures = ["prismaSchemaFolder", "fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["prismaSchemaFolder", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -48,46 +48,22 @@ model Audit {
 model Button {
   id        String    @id @default(uuid()) // Unique identifier for each button
   name      String // Button name for the user to identify it
+  text      String? // Text to display on the button
   createdAt DateTime  @default(now()) // When the button was created
   updatedAt DateTime  @updatedAt // When the button was last updated
   expiresAt DateTime? // Optional expiration date
 
-  text          String? // Text to display on the button
-  textColor     String? // Text color (hex code)
-  textShadow    String?
-  textTransform String?
-  fontFamily    String?
-  fontWeight    String?
-
-  backgroundColor        String? // Background color
-  backgroundColorHover   String? // Background color on hover
-  backgroundColorActive  String? // Background color when active
-  backgroundGradient     Boolean? @default(false) // Use gradient for background
-  backgroundGradientFrom String? // Gradient start color
-  backgroundGradientTo   String? // Gradient end color
-  backgroundGradientDeg  Int?     @default(0) // Gradient direction in degrees
-
-  backgroundImg String? // Background image URL
-  borderRadius  Int?    @default(0) // Border radius (e.g., pixels)
-  borderStyle   String? @default("solid") // Style of the border (e.g., solid, dashed)
-  borderWidth   Int?    @default(0) // Width of the border (e.g., pixels)
-
-  hoverState       Json? // Customizable hover state (JSON object for flexibility)
-  clickedState     Json? // State after the button has been clicked
   clickCount       Int   @default(0) // Number of clicks the button has received
   maxClicksPerDay  Int   @default(1000) // Max clicks allowed per day by all users
   maxClicksPerUser Int   @default(5) // Max clicks allowed per user or overall
   size             Float @default(1.0) // Relative size of the button, grows with clicks
 
-  message      String? // Message to display when the button hovered
+  messageText  String? // Message to display when the button hovered
   messageColor String? // Text color for the message
   messageBg    String? // Background color for the message
-  messageBgImg String? // Background image for the message
+  messageImg   String? // Background image for the message
 
-  // cssStyle Json? // Custom user CSS styles for the button
-
-  // animation Json? // JSON object for animations (e.g., bounce, fade)
-  // behavior  Json? // Additional behaviors like triggers or events
+  cssStyle Json? // Custom user CSS styles for the button
 
   disabled  Boolean @default(false) // Marks whether the button is disabled
   isVisible Boolean @default(true) // Controls if the button is visible on the wall
@@ -102,6 +78,8 @@ model Button {
   wall        Wall          @relation(fields: [wallId], references: [id])
   ButtonClick ButtonClick[]
   Tag         Tag[]
+  ButtonState ButtonState[]
+  Transition  Transition[]
 
   @@index([creatorId])
   @@index([wallId])
@@ -109,6 +87,65 @@ model Button {
   @@index([clickCount])
   @@index([uniqueClicks])
   @@index([createdAt])
+}
+
+// TODO: Add enums
+model ButtonState {
+  id        String  @id @default(uuid()) @db.Uuid
+  textColor String?
+
+  textShadowColor   String?
+  textShadowBlur    Int?
+  textShadowOffsetX Int?
+  textShadowOffsetY Int?
+
+  textDecorationLine      String?
+  textDecorationColor     String?
+  textDecorationStyle     String?
+  textDecorationThickness Int?
+
+  letterSpacing Int?
+  lineHeight    Int?
+
+  fontFamily String?
+  fontWeight String?
+  fontSize   Int?
+  fontStyle  String?
+
+  backgroundColor         String?
+  backgroundGradient      Boolean?
+  backgroundGradientFrom  String?
+  backgroundGradientTo    String?
+  backgroundGradientAngle Int?
+
+  backgroundImg String?
+
+  borderRadius Int?
+  borderStyle  String?
+  borderWidth  Int?
+  borderColor  String?
+
+  boxShadowColor String?
+  boxShadowBlur  Int?
+  boxShadowX     Int?
+  boxShadowY     Int?
+
+  opacity Float?
+
+  Button   Button? @relation(fields: [buttonId], references: [id])
+  buttonId String?
+}
+
+model Transition {
+  id String @id @default(uuid()) @db.Uuid
+
+  property       String // CSS property being transitioned (e.g., "background-color") TODO: Add enum
+  duration       Int? // Duration of the transition (in milliseconds)
+  timingFunction String? // Timing function of the transition (e.g., "ease-in-out") TODO: Add enum
+  delay          Int? // Delay before the transition starts (in milliseconds)
+
+  buttonId String // Foreign key to associate with a button
+  button   Button @relation(fields: [buttonId], references: [id]) // Relation to Button
 }
 
 model ButtonClick {
@@ -160,3 +197,74 @@ model RW_DataMigration {
   startedAt  DateTime
   finishedAt DateTime
 }
+
+// enum TransitionProperty {
+//   BackgroundColor
+//   BorderColor
+//   BorderRadius
+//   BorderWidth
+//   Color
+//   FontSize
+//   Opacity
+//   Padding
+// }
+
+// enum TransitionTimingFunction {
+//   ease
+//   easeIn
+//   easeOut
+//   easeInOut
+//   linear
+// }
+
+// enum TextDecoration {
+//   underline
+//   overline
+//   lineThrough
+//   none
+// }
+
+// enum TextDecorationLine {
+//   underline
+//   overline
+//   lineThrough
+//   none
+// }
+
+// enum TextDecorationStyle {
+//   solid
+//   double
+//   dotted
+//   dashed
+//   wavy
+// }
+
+// enum FontStyle {
+//   normal
+//   italic
+//   oblique
+// }
+
+// enum GradientDirection {
+//   toTop
+//   toTopRight
+//   toRight
+//   toBottomRight
+//   toBottom
+//   toBottomLeft
+//   toLeft
+//   toTopLeft
+// }
+
+// enum BorderStyle {
+//   none
+//   hidden
+//   dotted
+//   dashed
+//   solid
+//   double
+//   groove
+//   ridge
+//   inset
+//   outset
+// }

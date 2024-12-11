@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import clsx from 'clsx'
 
 import { Link, routes } from '@redwoodjs/router'
@@ -10,10 +8,10 @@ import AvatarButton from 'src/components/AvatarButton/AvatarButton'
 function AppHeader({ className }: JSX.IntrinsicElements['header']) {
   const { isAuthenticated, currentUser, loading } = useAuth()
 
-  const [showDropdown, setShowDropdown] = useState(false)
+  // const [showDropdown, setShowDropdown] = useState(false)
   return (
     <header
-      className={clsx`${className} primary-gleam-hover md:rounded-b-base-big flex h-16 items-center justify-between rounded-none border-1 border-t-0 border-base-700 bg-base-900 p-4  px-8`}
+      className={clsx`${className} primary-gleam-hover flex h-16 items-center justify-between rounded-none border-1 border-x-0 border-t-0 border-base-700 bg-base-900 p-4 px-8 md:rounded-b-base-big  md:border-x-1`}
     >
       <h1 className="flex items-center gap-2">
         <Link to={routes.home()} className="bg-base text-2xl font-bold">
@@ -53,11 +51,11 @@ function AppHeader({ className }: JSX.IntrinsicElements['header']) {
               <AvatarButton
                 onClick={() => {
                   console.log('clicked')
-                  setShowDropdown((prev) => !prev)
+                  // setShowDropdown((prev) => !prev)
                 }}
                 {...currentUser}
               />
-              <AvatarButtonDropdown showDropdown={showDropdown} />
+              <AvatarButtonDropdown />
             </div>
           </div>
         ) : (
@@ -125,7 +123,7 @@ function AuthLinks() {
   )
 }
 
-function AvatarButtonDropdown({ showDropdown }: { showDropdown: boolean }) {
+function AvatarButtonDropdown() {
   const { logOut } = useAuth()
   // if (!showDropdown) return null
 

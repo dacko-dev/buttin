@@ -7,7 +7,7 @@ type AuthLayoutProps = {
 
 const AuthLayout = ({ children }: AuthLayoutProps) => {
   return (
-    <main className="relative flex h-screen items-center justify-center">
+    <main className="relative flex min-h-screen items-center justify-center">
       <Toaster
         toastOptions={{
           className: 'rw-toast',
@@ -15,10 +15,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           position: 'bottom-right',
         }}
       />
-      <nav className="absolute left-10 top-10">
+      <nav className="absolute left-10 top-10 hidden sm:block">
         <Link
           aria-label="Back to home"
-          className="rounded-base-big flex p-4 hover:bg-base-900"
+          className="flex rounded-base-big p-4 hover:bg-base-900"
           to={routes.home()}
         >
           <svg

@@ -1,14 +1,14 @@
 // import { render } from '@redwoodjs/testing/web'
 
-// import ButtonForm from './ButtonForm'
+// import ButtonPreviewForm from './ButtonPreviewForm'
 
 // //   Improve this test with help from the Redwood Testing Doc:
 // //    https://redwoodjs.com/docs/testing#testing-components
 
-// describe('ButtonForm', () => {
+// describe('ButtonPreviewForm', () => {
 //   it('renders successfully', () => {
 //     expect(() => {
-//       render(<ButtonForm />)
+//       render(<ButtonPreviewForm />)
 //     }).not.toThrow()
 //   })
 // })

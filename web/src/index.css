@@ -57,7 +57,14 @@
   }
 
   .form-input {
-    @apply block w-full px-4 py-2  text-base bg-base-800 hover:bg-base-600 focus:bg-base-700 placeholder-base-100 transition duration-150 ease-in-out border border-base-600 rounded-base-small shadow-md ;
+    @apply block w-full px-4 py-2 text-base bg-base-800 hover:bg-base-600 focus:bg-base-700 placeholder-base-100 transition duration-150 ease-in-out border border-base-700 rounded-base-small shadow-md ;
+  }
+
+  .form-input-pill {
+    @apply block flex-grow w-full px-2 py-1 text-sm rounded-l-none bg-base-800 hover:bg-base-600 focus:bg-base-700 placeholder-base-100 transition duration-150 ease-in-out border border-base-700 rounded-base-small shadow-md ;
+  }
+  .form-label-pill {
+    @apply font-semibold text-base-300 flex items-center justify-center border-r-0 whitespace-nowrap border-base-700 rounded-r-none rounded-base-small text-sm border px-3 py-1
   }
 
   /* has 'group' class in the markup - if group is in the @apply, error pops up */

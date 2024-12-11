@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { UserProfile } from 'types/graphql'
 
 import AvatarButton from 'src/components/AvatarButton/AvatarButton'
@@ -7,7 +6,9 @@ const ProfileDetails = ({ userProfile }: { userProfile: UserProfile }) => {
   const { displayName, email, avatarUrl, bio, birthday } = userProfile
 
   const [editDisplayName, setEditDisplayName] = React.useState(false)
-  const [displayNameValue, setDisplayNameValue] = React.useState(displayName)
+  const [displayNameValue, setDisplayNameValue] = React.useState<
+    string | null | undefined
+  >(displayName)
 
   return (
     <div className="flex flex-col gap-12">
@@ -17,7 +18,7 @@ const ProfileDetails = ({ userProfile }: { userProfile: UserProfile }) => {
           <div className={`profile-section-square flex items-start gap-4`}>
             <AvatarButton
               avatarUrl={avatarUrl}
-              displayName={displayName}
+              displayName={displayName || undefined}
               email={email}
               className="h-14 w-14 "
             />
@@ -47,7 +48,6 @@ const ProfileDetails = ({ userProfile }: { userProfile: UserProfile }) => {
                   <input
                     maxLength={20}
                     readOnly={!editDisplayName}
-                    size={displayNameValue.length}
                     placeholder="Display Name"
                     style={{ outline: 'none' }}
                     className="no-focus-outline w-min cursor-pointer bg-transparent px-2"
@@ -224,7 +224,7 @@ const ProfileDetails = ({ userProfile }: { userProfile: UserProfile }) => {
         <h3 className="text-xl font-semibold">{'Actions'}</h3>
 
         <div className="flex items-center gap-4">
-          <button className="rounded-base-big flex items-center gap-2 border border-base-700 p-2 px-4 font-medium hover:bg-base-600">
+          <button className="flex items-center gap-2 rounded-base-big border border-base-700 p-2 px-4 font-medium hover:bg-base-600">
             Reset Password
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +241,7 @@ const ProfileDetails = ({ userProfile }: { userProfile: UserProfile }) => {
               />
             </svg>
           </button>
-          <button className="rounded-base-big flex items-center gap-2 bg-red-800 p-2 px-4 font-medium hover:bg-red-700">
+          <button className="flex items-center gap-2 rounded-base-big bg-red-800 p-2 px-4 font-medium hover:bg-red-700">
             Delete Account
             <svg
               xmlns="http://www.w3.org/2000/svg"
