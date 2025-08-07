@@ -4,21 +4,267 @@
 // Read more about both here:
 // https://www.prisma.io/docs/orm/prisma-migrate
 
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
+// https://github.com/prisma/prisma/discussions/19188
 
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = "native"
+  provider        = "prisma-client-js"
+  binaryTargets   = "native"
+  previewFeatures = ["prismaSchemaFolder", "fullTextSearchPostgres"]
 }
 
-// Define your own datamodels here and run `yarn redwood prisma migrate dev`
-// to create migrations for them and apply to your dev DB.
-// TODO: Please remove the following example:
-model UserExample {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+datasource db {
+  provider  = "postgresql"
+  directUrl = env("DIRECT_URL")
+  url       = env("DATABASE_URL")
 }
+
+model User {
+  id                  String        @id @default(uuid()) @db.Uuid
+  displayName         String?
+  email               String        @unique
+  avatarUrl           String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @default(now()) @updatedAt
+  bio                 String?       @db.VarChar(100)
+  birthday            DateTime?
+  hashedPassword      String
+  salt                String
+  resetToken          String?
+  resetTokenExpiresAt DateTime?
+  Button              Button[]
+  ButtonClick         ButtonClick[]
+  Audit               Audit[]
+}
+
+model Audit {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  log       String
+}
+
+model Button {
+  id        String    @id @default(uuid()) // Unique identifier for each button
+  name      String // Button name for the user to identify it
+  text      String? // Text to display on the button
+  createdAt DateTime  @default(now()) // When the button was created
+  updatedAt DateTime  @updatedAt // When the button was last updated
+  expiresAt DateTime? // Optional expiration date
+
+  clickCount       Int   @default(0) // Number of clicks the button has received
+  maxClicksPerDay  Int   @default(1000) // Max clicks allowed per day by all users
+  maxClicksPerUser Int   @default(5) // Max clicks allowed per user or overall
+  size             Float @default(1.0) // Relative size of the button, grows with clicks
+
+  messageText  String? // Message to display when the button hovered
+  messageColor String? // Text color for the message
+  messageBg    String? // Background color for the message
+  messageImg   String? // Background image for the message
+
+  cssStyle Json? // Custom user CSS styles for the button
+
+  disabled  Boolean @default(false) // Marks whether the button is disabled
+  isVisible Boolean @default(true) // Controls if the button is visible on the wall
+  // isActive  Boolean @default(true) // Marks whether the button can be interacted with
+
+  creatorId String @db.Uuid // ID of the user who created the button
+  creator   User   @relation(fields: [creatorId], references: [id])
+
+  uniqueClicks Int @default(0) // Number of unique users who clicked
+
+  wallId      Int // ID of the wall the button belongs to
+  wall        Wall          @relation(fields: [wallId], references: [id])
+  ButtonClick ButtonClick[]
+  Tag         Tag[]
+  ButtonState ButtonState[]
+  Transition  Transition[]
+
+  @@index([creatorId])
+  @@index([wallId])
+  @@index([isVisible])
+  @@index([clickCount])
+  @@index([uniqueClicks])
+  @@index([createdAt])
+}
+
+// TODO: Add enums
+model ButtonState {
+  id        String  @id @default(uuid()) @db.Uuid
+  textColor String?
+
+  textShadowColor   String?
+  textShadowBlur    Int?
+  textShadowOffsetX Int?
+  textShadowOffsetY Int?
+
+  textDecorationLine      String?
+  textDecorationColor     String?
+  textDecorationStyle     String?
+  textDecorationThickness Int?
+
+  letterSpacing Int?
+  lineHeight    Int?
+
+  fontFamily String?
+  fontWeight String?
+  fontSize   Int?
+  fontStyle  String?
+
+  backgroundColor         String?
+  backgroundGradient      Boolean?
+  backgroundGradientFrom  String?
+  backgroundGradientTo    String?
+  backgroundGradientAngle Int?
+
+  backgroundImg String?
+
+  borderRadius Int?
+  borderStyle  String?
+  borderWidth  Int?
+  borderColor  String?
+
+  boxShadowColor String?
+  boxShadowBlur  Int?
+  boxShadowX     Int?
+  boxShadowY     Int?
+
+  opacity Float?
+
+  Button   Button? @relation(fields: [buttonId], references: [id])
+  buttonId String?
+}
+
+model Transition {
+  id String @id @default(uuid()) @db.Uuid
+
+  property       String // CSS property being transitioned (e.g., "background-color") TODO: Add enum
+  duration       Int? // Duration of the transition (in milliseconds)
+  timingFunction String? // Timing function of the transition (e.g., "ease-in-out") TODO: Add enum
+  delay          Int? // Delay before the transition starts (in milliseconds)
+
+  buttonId String // Foreign key to associate with a button
+  button   Button @relation(fields: [buttonId], references: [id]) // Relation to Button
+}
+
+model ButtonClick {
+  id        BigInt   @id @default(autoincrement()) // Unique identifier for each button click
+  createdAt DateTime @default(now()) // When the button was clicked
+
+  ipAddress String?
+  buttonId  String // ID of the button that was clicked
+  button    Button  @relation(fields: [buttonId], references: [id])
+
+  userId String @db.Uuid // ID of the user who clicked the button
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([buttonId])
+}
+
+model Wall {
+  id        Int      @id @default(autoincrement()) // Unique identifier for each wall
+  name      String? // Name for the custom wall
+  createdAt DateTime @default(now()) // When the wall was created
+  updatedAt DateTime @updatedAt // When the wall was last updated
+
+  title       String // Title or label for the wall
+  number      Int     @unique // Number of the wall
+  description String? // Description or additional information
+  maxClicks   Int     @default(10000) // Max clicks allowed per Wall
+
+  buttons Button[] // Buttons associated with the wall
+
+  @@index([number])
+  @@index([createdAt])
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement()) // Unique identifier for each tag
+  name      String   @unique // Name of the tag
+  createdAt DateTime @default(now()) // When the tag was created
+  updatedAt DateTime @updatedAt // When the tag was last updated
+
+  buttons Button[] // Buttons associated with the tag
+
+  @@index([name])
+}
+
+model RW_DataMigration {
+  version    String   @id
+  name       String
+  startedAt  DateTime
+  finishedAt DateTime
+}
+
+// enum TransitionProperty {
+//   BackgroundColor
+//   BorderColor
+//   BorderRadius
+//   BorderWidth
+//   Color
+//   FontSize
+//   Opacity
+//   Padding
+// }
+
+// enum TransitionTimingFunction {
+//   ease
+//   easeIn
+//   easeOut
+//   easeInOut
+//   linear
+// }
+
+// enum TextDecoration {
+//   underline
+//   overline
+//   lineThrough
+//   none
+// }
+
+// enum TextDecorationLine {
+//   underline
+//   overline
+//   lineThrough
+//   none
+// }
+
+// enum TextDecorationStyle {
+//   solid
+//   double
+//   dotted
+//   dashed
+//   wavy
+// }
+
+// enum FontStyle {
+//   normal
+//   italic
+//   oblique
+// }
+
+// enum GradientDirection {
+//   toTop
+//   toTopRight
+//   toRight
+//   toBottomRight
+//   toBottom
+//   toBottomLeft
+//   toLeft
+//   toTopLeft
+// }
+
+// enum BorderStyle {
+//   none
+//   hidden
+//   dotted
+//   dashed
+//   solid
+//   double
+//   groove
+//   ridge
+//   inset
+//   outset
+// }
